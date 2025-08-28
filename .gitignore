@@ -1,0 +1,32 @@
+# Zencoder configs
+.zencoder/
+
+# Personal configuration (do not track)
+local-config.json
+.luarc.json
+
+# Build outputs
+*.zip
+*.edge
+*.tar.gz
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Local tools/scripts
+tools/
+
+# Python cache
+__pycache__/
+.pytest_cache/
+
+# VS Code settings
+.vscode/settings.json
+
+# Coverage reports
+.coverage
+lua_coverage.json
+tests/lua_coverage.lua

@@ -1,0 +1,9 @@
+{
+  "namespace": "your-namespace-here",
+  "profileId": "your-profile-id-here",
+  "presentationId": "your-presentation-id-here",
+  "smartthings": {
+    "channelId": "your-channel-id-here",
+    "hubId": "your-hub-id-here"
+  }
+}

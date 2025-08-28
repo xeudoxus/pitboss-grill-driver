@@ -1,0 +1,9 @@
+name: virtual-probe-4
+components:
+  - id: main
+    capabilities:
+      - id: temperatureMeasurement
+        version: 1
+metadata:
+  mnmn: SmartThingsCommunity
+  vid: generic-temperature-sensor

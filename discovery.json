@@ -1,0 +1,8 @@
+{
+  "protocols": ["LAN"],
+  "id": "pitboss-lan-discovery",
+  "deviceLabel": "Pit Boss Grill",
+  "manufacturer": "Pit Boss",
+  "model": "Oven",
+  "deviceProfileName": "pitboss-grill-profile"
+}

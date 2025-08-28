@@ -1,0 +1,90 @@
+# Dependabot configuration file
+# See https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  # Maintain dependencies for GitHub Actions
+  # This checks for new versions of actions used in your workflows.
+  - package-ecosystem: github-actions
+    directory: / # Location of .github/workflows
+    schedule:
+      interval: weekly
+      day: monday
+    commit-message:
+      prefix: ci
+      include: scope
+    reviewers:
+      - xeudoxus
+    labels:
+      - ci
+      - dependencies
+    # Group all GitHub Actions updates into a single pull request to reduce noise.
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+
+  # Maintain dependencies for Python (used for testing)
+  # This checks for new versions of Python packages listed in requirements.txt.
+  - package-ecosystem: pip
+    directory: / # Assumes requirements.txt is at the root
+    schedule:
+      interval: weekly
+      day: monday
+    commit-message:
+      prefix: test
+      include: scope
+    reviewers:
+      - xeudoxus
+    labels:
+      - test
+      - dependencies
+    # Group all Python test dependency updates into a single pull request.
+    groups:
+      python-test-deps:
+        patterns:
+          - "*"
+
+  # Maintain dependencies for PowerShell (used for build scripts)
+  # This checks for new versions of PowerShell modules.
+  # Create a `requirements.psd1` at the root to track modules.
+  - package-ecosystem: powershell-gallery
+    directory: / # Location of requirements.psd1
+    schedule:
+      interval: weekly
+      day: monday
+    commit-message:
+      prefix: build
+      include: scope
+    reviewers:
+      - xeudoxus
+    labels:
+      - build
+      - dependencies
+    # Group all PowerShell build dependency updates into a single pull request.
+    groups:
+      powershell-build-deps:
+        patterns:
+          - "*"
+
+  # Maintain dependencies for Node.js (npm)
+  # This is for development tools like the SmartThings CLI.
+  # Create a `package.json` at the root to track npm packages.
+  - package-ecosystem: npm
+    directory: / # Location of package.json
+    schedule:
+      interval: weekly
+      day: monday
+    commit-message:
+      prefix: build
+      include: scope
+    reviewers:
+      - xeudoxus
+    labels:
+      - build
+      - dependencies
+    # Group all npm dependency updates into a single pull request.
+    groups:
+      npm-dev-deps:
+        patterns:
+          - "*"

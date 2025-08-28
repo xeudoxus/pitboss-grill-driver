@@ -1,0 +1,57 @@
+{
+  "Lua.runtime.version": "Lua 5.3",
+  "Lua.workspace.library": [
+    ".",
+    "src",
+    "tests",
+    "tests/mocks",
+    "C:/Users/Admin/Documents/SmartThingsDrivers/lua_libs-api_v14/lua_libs-api_v14"
+  ],
+  "Lua.workspace.checkThirdParty": false,
+  "Lua.diagnostics.globals": [
+    "capabilities",
+    "device_handlers", 
+    "dp",
+    "json",
+    "Driver",
+    "driver",
+    "log"
+  ],
+  "Lua.diagnostics.groupFileStatus": {
+    "tests/**": "Opened!",
+    "tools/**": "Opened!"
+  },
+  "Lua.diagnostics.groupSeverity": {
+    "tests/**": {
+      "duplicate-set-field": "Hint",
+      "different-requires": "Hint", 
+      "undefined-field": "Hint",
+      "lowercase-global": "Hint",
+      "undefined-global": "Hint",
+      "need-check-nil": "Hint",
+      "missing-fields": "Hint",
+      "inject-field": "Hint",
+      "param-type-mismatch": "Hint",
+      "assign-type-mismatch": "Hint"
+    },
+    "tools/**": {
+      "duplicate-set-field": "Hint",
+      "different-requires": "Hint", 
+      "undefined-field": "Hint",
+      "lowercase-global": "Hint",
+      "undefined-global": "Hint",
+      "need-check-nil": "Hint",
+      "missing-fields": "Hint",
+      "inject-field": "Hint",
+      "param-type-mismatch": "Hint",
+      "assign-type-mismatch": "Hint"
+    }
+  },
+  "Lua.completion.callSnippet": "Replace",
+  "Lua.completion.showParams": true,
+  "Lua.hover.enable": true,
+  "Lua.workspace.ignoreDir": [
+    ".venv",
+    ".git"
+  ]
+}

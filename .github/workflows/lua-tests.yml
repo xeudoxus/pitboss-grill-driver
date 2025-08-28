@@ -1,0 +1,31 @@
+name: Lua Tests
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    name: Run Lua 5.3 tests (Windows)
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Lua 5.3 (choco)
+        shell: pwsh
+        run: |
+          choco install lua53 -y
+          $lua = (Get-Command lua.exe -ErrorAction SilentlyContinue).Source
+          if (-not $lua) { throw 'Lua not found after install' }
+          lua -v
+
+      - name: Run tests
+        shell: pwsh
+        run: |
+          $root = "$env:GITHUB_WORKSPACE"
+          $runner = Join-Path $root 'tests/runner.lua'
+          lua "$runner"

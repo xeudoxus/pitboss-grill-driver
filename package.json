@@ -1,0 +1,12 @@
+{
+  "name": "pitboss-grill-driver-devtools",
+  "version": "1.0.0",
+  "description": "Development tools for the Pit Boss Grill Driver",
+  "private": true,
+  "devDependencies": {
+    "@smartthings/cli": "^1.10.5"
+  },
+  "engines": {
+    "node": ">=18.5.0"
+  }
+}
