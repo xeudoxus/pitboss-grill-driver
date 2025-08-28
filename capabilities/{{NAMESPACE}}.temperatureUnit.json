@@ -1,0 +1,35 @@
+{
+  "id": "{{NAMESPACE}}.temperatureUnit",
+  "version": 1,
+  "status": "proposed",
+  "name": "Temperature Unit",
+  "attributes": {
+    "unit": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "enum": ["F", "C"]
+          }
+        },
+        "additionalProperties": false
+      },
+      "setter": "setTemperatureUnit"
+    }
+  },
+  "commands": {
+    "setTemperatureUnit": {
+      "name": "setTemperatureUnit",
+      "arguments": [
+        {
+          "name": "state",
+          "schema": {
+            "type": "string",
+            "enum": ["F", "C"]
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,13 @@
+dashboard:
+  states:
+    - label: '{{probe.value}}'
+  actions: []
+  basicPlus: []
+detailView:
+  - label: "Temperature Probes"
+    displayType: state
+    state:
+      label: '{{probe.value}}'
+      value: probe.value
+id: {{NAMESPACE}}.temperatureProbes
+version: 1

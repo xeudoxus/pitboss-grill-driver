@@ -1,0 +1,13 @@
+dashboard:
+  states:
+    - label: '{{lastMessage.value}}'
+  actions: []
+  basicPlus: []
+detailView:
+  - label: "Grill Status"
+    displayType: state
+    state:
+      label: '{{lastMessage.value}}'
+      value: lastMessage.value
+id: {{NAMESPACE}}.grillStatus
+version: 1

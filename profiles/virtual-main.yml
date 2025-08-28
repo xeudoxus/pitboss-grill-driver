@@ -1,0 +1,12 @@
+name: virtual-main
+components:
+  - id: main
+    capabilities:
+      - id: temperatureMeasurement
+        version: 1
+      - id: switch
+        version: 1
+      - id: powerMeter
+        version: 1
+    categories:
+      - name: MultiFunctionalSensor

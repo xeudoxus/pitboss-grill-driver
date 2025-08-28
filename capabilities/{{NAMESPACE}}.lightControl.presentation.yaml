@@ -1,0 +1,49 @@
+dashboard:
+  states:
+    - label: '{{lightState.value}}'
+      alternatives:
+        - key: 'ON'
+          value: Light ON
+          type: active
+        - key: 'OFF'
+          value: Light OFF
+          type: inactive
+  actions:
+    - displayType: toggleSwitch
+      toggleSwitch:
+        command:
+          name: setLightState
+          'on': 'ON'
+          'off': 'OFF'
+          argumentType: string
+        state:
+          value: lightState.value
+          'on': 'ON'
+          'off': 'OFF'
+          valueType: string
+  basicPlus: []
+detailView:
+  - label: Light
+    displayType: toggleSwitch
+    toggleSwitch:
+      command:
+        name: setLightState
+        'on': 'ON'
+        'off': 'OFF'
+        argumentType: string
+      state:
+        value: lightState.value
+        'on': 'ON'
+        'off': 'OFF'
+        valueType: string
+        label: '{{lightState.value}}'
+        alternatives:
+          - key: 'ON'
+            value: Light ON
+            type: active
+          - key: 'OFF'
+            value: Light OFF
+            type: inactive
+
+id: {{NAMESPACE}}.lightControl
+version: 1

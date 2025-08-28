@@ -1,0 +1,76 @@
+name: CI - Build & Test
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+jobs:
+  lua-tests:
+    name: Lua 5.3 Unit Tests
+    runs-on: windows-latest
+    continue-on-error: false
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Install Lua 5.3
+        shell: pwsh
+        run: |
+          choco install lua53 -y
+          $lua = (Get-Command lua.exe -ErrorAction SilentlyContinue).Source
+          if (-not $lua) { throw 'Lua not found after install' }
+          lua -v
+      - name: Add stub smartthings CLI (CI-safe)
+        shell: pwsh
+        run: |
+          $tools = Join-Path $env:GITHUB_WORKSPACE 'tools'
+          New-Item -ItemType Directory -Path $tools -Force | Out-Null
+          $cmdPath = Join-Path $tools 'smartthings.cmd'
+          Set-Content -Path $cmdPath -Value '@echo off' -NoNewline -Encoding ASCII
+          Add-Content -Path $cmdPath -Value 'echo {"driverId":"ci-driver","name":"CI Driver","version":"ci","packageKey":"ci"}' -Encoding ASCII
+          Add-Content -Path $env:GITHUB_PATH -Value $tools
+      - name: Run Lua unit tests
+        shell: pwsh
+        run: |
+          lua tests/runner.lua
+  build-and-pwsh-tests:
+    name: PowerShell Tests & Package
+    runs-on: windows-latest
+    continue-on-error: false
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      # PowerShell is pre-installed on windows-latest runners; no setup required
+      - name: Install Lua 5.3 (for test.ps1)
+        shell: pwsh
+        run: |
+          choco install lua53 -y
+          $lua = (Get-Command lua.exe -ErrorAction SilentlyContinue).Source
+          if (-not $lua) { throw 'Lua not found after install' }
+          lua -v
+      - name: Add stub smartthings CLI (CI-safe)
+        shell: pwsh
+        run: |
+          $tools = Join-Path $env:GITHUB_WORKSPACE 'tools'
+          New-Item -ItemType Directory -Path $tools -Force | Out-Null
+          $cmdPath = Join-Path $tools 'smartthings.cmd'
+          Set-Content -Path $cmdPath -Value '@echo off' -NoNewline -Encoding ASCII
+          Add-Content -Path $cmdPath -Value 'echo {"driverId":"ci-driver","name":"CI Driver","version":"ci","packageKey":"ci"}' -Encoding ASCII
+          Add-Content -Path $env:GITHUB_PATH -Value $tools
+      - name: Run PowerShell tests
+        shell: pwsh
+        run: pwsh -NoProfile -ExecutionPolicy Bypass -File .\test.ps1
+      - name: Run package-only build (AutoRestore)
+        shell: pwsh
+        run: pwsh -NoProfile -ExecutionPolicy Bypass -File .\build.ps1 -PackageOnly -y
+      - name: Upload build artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: packaged-driver
+          path: |
+            ./out/
+            ./*.zip

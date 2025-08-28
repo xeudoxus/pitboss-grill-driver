@@ -1,0 +1,28 @@
+    /.vscode/
+    /.zencoder/
+
+# Personal configuration
+local-config.json
+.luarc.json
+
+# Build outputs
+*.zip
+*.edge
+*.tar.gz
+    # Virtual environments
+    .venv/
+    venv/
+    env/
+    ENV/
+
+    # Tools/local scripts directory (not tracked)
+    tools/
+
+# Python cache and coverage
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.coverage
+coverage.xml
+.pytest_cache/

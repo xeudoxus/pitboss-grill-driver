@@ -1,0 +1,58 @@
+{
+    "lua.workspace.library": [
+        "C:/Users/Admin/Documents/SmartThingsDrivers/lua_libs-api_v14/lua_libs-api_v14",
+        "./src",
+        "./tests",
+        "./tests/mocks"
+    ],
+    "lua.workspace.checkThirdParty": false,
+    "lua.diagnostics.globals": [
+        "capabilities",
+        "device_handlers",
+        "dp",
+        "json",
+        "Driver",
+        "driver",
+        "log"
+    ],
+    "lua.diagnostics.groupFileStatus": {
+        "tests/**": "Opened!",
+        "tools/**": "Opened!"
+    },
+    "lua.diagnostics.groupSeverity": {
+        "tests/**": {
+            "duplicate-set-field": "Hint",
+            "different-requires": "Hint", 
+            "undefined-field": "Hint",
+            "lowercase-global": "Hint",
+            "undefined-global": "Hint",
+            "need-check-nil": "Hint",
+            "missing-fields": "Hint",
+            "inject-field": "Hint",
+            "param-type-mismatch": "Hint",
+            "assign-type-mismatch": "Hint"
+        },
+        "tools/**": {
+            "duplicate-set-field": "Hint",
+            "different-requires": "Hint", 
+            "undefined-field": "Hint",
+            "lowercase-global": "Hint",
+            "undefined-global": "Hint",
+            "need-check-nil": "Hint",
+            "missing-fields": "Hint",
+            "inject-field": "Hint",
+            "param-type-mismatch": "Hint",
+            "assign-type-mismatch": "Hint"
+        }
+    },
+    "lua.completion.callSnippet": "Replace",
+    "lua.completion.showParams": true,
+    "lua.hover.enable": true,
+    "lua.workspace.ignoreDir": [
+        ".venv",
+        ".git"
+    ],
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "zencoder.enableRepoIndexing": true
+}

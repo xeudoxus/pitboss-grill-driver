@@ -1,0 +1,49 @@
+dashboard:
+  states:
+    - label: '{{unit.value}}'
+      alternatives:
+        - key: 'F'
+          value: Fahrenheit
+          type: active
+        - key: 'C'
+          value: Celsius
+          type: active
+  actions:
+    - displayType: toggleSwitch
+      toggleSwitch:
+        command:
+          name: setTemperatureUnit
+          'on': 'F'
+          'off': 'C'
+          argumentType: string
+        state:
+          value: unit.value
+          valueType: string
+          'on': 'F'
+          'off': 'C'
+  basicPlus: []
+detailView:
+  - label: Temperature Unit
+    displayType: toggleSwitch
+    toggleSwitch:
+      command:
+        name: setTemperatureUnit
+        'on': 'F'
+        'off': 'C'
+        argumentType: string
+      state:
+        value: unit.value
+        valueType: string
+        'on': 'F'
+        'off': 'C'
+        label: '{{unit.value}}'
+        alternatives:
+          - key: 'F'
+            value: Fahrenheit
+            type: active
+          - key: 'C'
+            value: Celsius
+            type: active
+
+id: {{NAMESPACE}}.temperatureUnit
+version: 1
