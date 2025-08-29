@@ -18,20 +18,60 @@ jobs:
         shell: pwsh
         run: |
           choco install lua53 -y
-          # Refresh environment variables to pick up new PATH
-          $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("PATH","User")
-          # Find lua executable dynamically
-          $lua = Get-Command lua.exe -ErrorAction SilentlyContinue
+          # Wait a moment for installation to complete
+          Start-Sleep -Seconds 2
+          
+          # Multiple approaches to find and set up Lua
+          $lua = $null
+          
+          # Method 1: Try direct path check
+          $directPath = "C:\ProgramData\chocolatey\lib\lua53\tools\lua.exe"
+          if (Test-Path $directPath) {
+            $lua = $directPath
+            Write-Host "Found Lua at direct path: $lua"
+          }
+          
+          # Method 2: Refresh environment and try Get-Command
           if (-not $lua) {
-            # Search in common Chocolatey installation paths
-            $chocoLib = if ($env:ChocolateyInstall) { "$env:ChocolateyInstall\lib\lua53\tools" } else { "C:\ProgramData\chocolatey\lib\lua53\tools" }
-            $lua = Get-ChildItem -Path $chocoLib -Name "lua.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
-            if ($lua) {
-              $lua = Join-Path $chocoLib $lua
-              $env:PATH += ";$chocoLib"
+            $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("PATH","User")
+            $luaCmd = Get-Command lua.exe -ErrorAction SilentlyContinue
+            if ($luaCmd) {
+              $lua = $luaCmd.Source
+              Write-Host "Found Lua via Get-Command: $lua"
             }
           }
-          if (-not $lua) { throw 'Lua executable not found after installation' }
+          
+          # Method 3: Search Chocolatey directories
+          if (-not $lua) {
+            $searchPaths = @(
+              "C:\ProgramData\chocolatey\lib\lua53\tools",
+              "$env:ChocolateyInstall\lib\lua53\tools"
+            )
+            foreach ($path in $searchPaths) {
+              if ($path -and (Test-Path $path)) {
+                $luaExe = Get-ChildItem -Path $path -Name "lua.exe" -ErrorAction SilentlyContinue
+                if ($luaExe) {
+                  $lua = Join-Path $path $luaExe
+                  Write-Host "Found Lua via search: $lua"
+                  break
+                }
+              }
+            }
+          }
+          
+          # Verify we found Lua and add to PATH
+          if (-not $lua -or -not (Test-Path $lua)) {
+            Write-Host "Available files in Chocolatey lib:"
+            Get-ChildItem "C:\ProgramData\chocolatey\lib\lua53" -Recurse -ErrorAction SilentlyContinue | Select-Object FullName
+            throw 'Lua executable not found after installation'
+          }
+          
+          # Add Lua directory to PATH for subsequent steps
+          $luaDir = Split-Path $lua -Parent
+          $env:PATH += ";$luaDir"
+          
+          # Test Lua
+          Write-Host "Testing Lua at: $lua"
           & $lua -v
       - name: Add stub smartthings CLI (CI-safe)
         shell: pwsh
