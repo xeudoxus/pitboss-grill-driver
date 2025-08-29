@@ -15,19 +15,21 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential lua5.1 liblua5.1-dev luarocks
+          sudo apt-get install -y build-essential lua5.3 liblua5.3-dev luarocks
 
       - name: Install luafilesystem and luacheck
         run: |
-          luarocks install luafilesystem 1.8.0-1 || luarocks install luafilesystem
-          luarocks install luacheck || true
+          set -e
+          if ! luarocks install luafilesystem 1.8.0-1; then
+            luarocks install luafilesystem || true
+          fi
+          if ! luarocks install luacheck; then
+            echo 'luacheck install failed; printing luarocks list for debug:'
+            luarocks list
+            exit 1
+          fi
 
       - name: Run luacheck
         run: |
-          if command -v luacheck >/dev/null 2>&1; then
-            echo 'Running luacheck...'
-            luacheck src tests || true
-          else
-            echo 'luacheck not installed; check earlier steps for errors.'
-            exit 1
-          fi
+          echo 'Running luacheck...'
+          luacheck src tests

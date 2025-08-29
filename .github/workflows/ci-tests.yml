@@ -31,18 +31,35 @@ jobs:
       shell: pwsh
       run: |
         python -m venv .venv
-        if ($IsWindows) {
-          .\.venv\Scripts\Activate.ps1
+
+        # Add the venv "bin"/Scripts directory to the job PATH persistently
+        if ($env:RUNNER_OS -eq 'Windows') {
+          $venvBin = Join-Path $PWD '.venv\Scripts'
         } else {
-          . ./.venv/bin/Activate.ps1
+          $venvBin = Join-Path $PWD '.venv/bin'
         }
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
+        Write-Host "Adding virtualenv bin to PATH: $venvBin"
+        Add-Content -Path $env:GITHUB_PATH -Value $venvBin
+
+        # Use the venv's python executable to upgrade pip and install deps
+        $py = Join-Path $venvBin 'python.exe'
+        if (-not (Test-Path $py)) { $py = Join-Path $venvBin 'python' }
+        & $py -m pip install --upgrade pip
+        & $py -m pip install -r requirements.txt
 
     - name: Run tests
       shell: pwsh
       run: |
         Write-Host "PowerShell Version: $($PSVersionTable.PSVersion)"
+
+        # Activate the venv inside this step so test.ps1 runs with the correct interpreter
+        if ($env:RUNNER_OS -eq 'Windows') {
+          . .\.venv\Scripts\Activate.ps1
+        } else {
+          # PowerShell on Linux has an Activate.ps1 in the venv bin directory
+          if (Test-Path './.venv/bin/Activate.ps1') { . ./.venv/bin/Activate.ps1 }
+        }
+
         pwsh -NoProfile -ExecutionPolicy Bypass -File "./test.ps1" | Tee-Object -FilePath test-output.txt
         if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
