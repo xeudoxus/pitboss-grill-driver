@@ -336,15 +336,15 @@ git add -A && git commit -m "Fix temperature calibration"
 .\build.ps1
 
 # 3. Tag release
-git tag "2025.9.2" && git push origin main --tags
+git tag "2025.9.4" && git push origin main --tags
 ```
 
 #### Version Format
 
 **CalVer: `YYYY.M.D`**
 
-- `2025.9.2` = September 2, 2025
-- `2025.9.2.1` = Second release on September 2, 2025 (if needed)
+- `2025.9.4` = September 4, 2025
+- `2025.9.4.1` = Second release on September 4, 2025 (if needed)
 
 **Benefits:**
 
@@ -708,7 +708,7 @@ Developed via lawful interoperability analysis (network traffic + publicly expos
 ## 🙏 Acknowledgments
 
 - Created by: xeudoxus
-- Version: 2025.9.2 (Documentation last synced: 2025-09-02)
+- Version: 2025.9.4 (Documentation last synced: 2025-09-04)
 - Developed and tested on: Pit Boss PB1285KC (KC Combo)
 - SmartThings Edge platform
 - Pit Boss grill reverse engineering community

@@ -42,7 +42,7 @@ body:
     attributes:
       label: Driver Version
       description: What version of the driver are you using?
-      placeholder: e.g., 2025.9.2
+      placeholder: e.g., 2025.9.4
     validations:
       required: true
 
