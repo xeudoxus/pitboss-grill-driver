@@ -1,9 +1,8 @@
 # Pit Boss Grill SmartThings Edge Driver
 
-![CI][ci]
+[![CI][ci-shield]][ci]
 [![GitHub Release][releases-shield]][releases]
 [![License][license-shield]](LICENSE)
-[![Luacheck][luacheck-shield]][luacheck]
 [![GitHub Activity][commits-shield]][commits]
 [![Issues][issues-shield]][issues]
 [![Wiki][wiki-shield]][wiki]
@@ -740,4 +739,5 @@ Developed via lawful interoperability analysis (network traffic + publicly expos
 [wiki]: https://github.com/xeudoxus/pitboss-grill-driver/wiki
 [compatibility-shield]: https://img.shields.io/badge/tested-PB1285KC-success.svg?style=for-the-badge
 [compatibility]: https://github.com/xeudoxus/pitboss-grill-driver/wiki/Model-Compatibility
-[ci]: https://img.shields.io/github/actions/workflow/status/xeudoxus/pitboss-grill-driver/ci.yml?style=for-the-badge
+[ci-shield]: https://img.shields.io/github/actions/workflow/status/xeudoxus/pitboss-grill-driver/ci.yml?style=for-the-badge
+[ci]: https://github.com/xeudoxus/pitboss-grill-driver/actions/workflows/ci.yml
