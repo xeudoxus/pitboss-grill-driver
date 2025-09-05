@@ -1,0 +1,25 @@
+{
+  "version": "2025.9.4",
+  "lastUpdated": "2025-09-04T21:48:23Z",
+  "files": {
+    "capability_handlers.lua": "2025.9.4",
+    "command_service.lua": "2025.9.4",
+    "config.lua": "2025.9.4",
+    "custom_capabilities.lua": "2025.9.4",
+    "device_manager.lua": "2025.9.4",
+    "device_status_service.lua": "2025.9.4",
+    "discovery.lua": "2025.9.4",
+    "health_monitor.lua": "2025.9.4",
+    "init.lua": "2025.9.4",
+    "network_utils.lua": "2025.9.4",
+    "panic_manager.lua": "2025.9.4",
+    "pitboss_api.lua": "2025.9.4",
+    "probe_display.lua": "2025.9.4",
+    "refresh_service.lua": "2025.9.4",
+    "temperature_calibration.lua": "2025.9.4",
+    "temperature_service.lua": "2025.9.4",
+    "virtual_device_manager.lua": "2025.9.4",
+    "config.yml": "2025.9.4",
+    "pitboss-grill-profile.yml": "2025.9.4"
+  }
+}

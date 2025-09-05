@@ -1,0 +1,11 @@
+name: virtual-at-temp
+components:
+  - id: main
+    capabilities:
+      - id: switch
+        version: 1
+    categories:
+      - name: Switch
+metadata:
+  mnmn: SmartThingsCommunity
+  vid: generic-switch

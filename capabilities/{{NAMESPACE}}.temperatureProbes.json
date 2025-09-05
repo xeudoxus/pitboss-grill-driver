@@ -1,0 +1,26 @@
+{
+  "id": "{{NAMESPACE}}.temperatureProbes",
+  "version": 1,
+  "status": "proposed",
+  "name": "Temperature Probes",
+  "description": "Manages multiple temperature probe sensors for monitoring food temperature",
+  "attributes": {
+    "probe": {
+      "description": "Temperature probe display text for all connected probes",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "maxLength": 255,
+            "description": "Probe temperature display text (limited to 255 characters)"
+          }
+        },
+        "additionalProperties": false,
+        "required": ["value"]
+      },
+      "enumCommands": []
+    }
+  },
+  "commands": {}
+}

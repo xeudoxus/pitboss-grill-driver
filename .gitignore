@@ -1,0 +1,63 @@
+# Zencoder configs
+.zencoder/
+
+# Personal configuration (do not track)
+local-config.json
+.luarc.json
+
+# Build outputs
+*.zip
+*.edge
+*.tar.gz
+out/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Local tools/scripts
+tools/
+
+# Python cache
+__pycache__/
+.pytest_cache/
+*.pyc
+*.pyo
+*.pyd
+
+# Testing
+.coverage
+htmlcov/
+coverage.xml
+.tox/
+.nox/
+lua_coverage.json
+tests/lua_coverage.lua
+
+# VS Code settings
+.vscode/settings.json
+.vscode/launch.json
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+
+# IDE files
+*.swp
+*.swo
+*~
+
+# Wiki repository (separate repo)
+wiki-github/

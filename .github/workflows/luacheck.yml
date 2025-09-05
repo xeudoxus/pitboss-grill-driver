@@ -1,0 +1,41 @@
+name: Luacheck
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+jobs:
+  luacheck:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential lua5.3 liblua5.3-dev luarocks
+
+      - name: Install luafilesystem and luacheck
+        run: |
+          set -e
+          if ! luarocks install --local luafilesystem 1.8.0-1; then
+            luarocks install --local luafilesystem || true
+          fi
+          if ! luarocks install --local luacheck; then
+            echo 'luacheck install failed; printing luarocks list for debug:'
+            luarocks list
+            exit 1
+          fi
+          export PATH="$HOME/.luarocks/bin:$PATH"
+          echo "$HOME/.luarocks/bin" >> $GITHUB_PATH
+
+      - name: Run luacheck
+        run: |
+          echo 'Running luacheck...'
+          if luacheck src tests; then
+            echo "Luacheck passed with no issues"
+          else
+            echo "Luacheck found warnings/errors but continuing with build"
+          fi

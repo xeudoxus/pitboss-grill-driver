@@ -1,0 +1,244 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "PBG: Build and Deploy",
+      "type": "shell",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "windows": {
+        "command": "pwsh",
+        "args": [
+          "-NoProfile",
+          "-ExecutionPolicy", "Bypass",
+          "-Command", "[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; $OutputEncoding = [System.Text.Encoding]::UTF8; & '${workspaceFolder}/build.ps1'"
+        ]
+      },
+      "linux": {
+        "command": "pwsh",
+        "args": ["-File", "${workspaceFolder}/build.ps1"]
+      },
+      "osx": {
+        "command": "pwsh",
+        "args": ["-File", "${workspaceFolder}/build.ps1"]
+      },
+      "problemMatcher": [],
+      "detail": "This script uses personal configuration from `local-config.json` to replace placeholder values, builds the SmartThings Edge driver package, optionally deploys it, and then restores placeholder values for version control."
+    },
+    {
+      "label": "PGB: Package Driver Only",
+      "type": "shell",
+      "windows": {
+        "command": "pwsh",
+        "args": [
+          "-NoProfile",
+          "-ExecutionPolicy", "Bypass",
+          "-Command", "[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; $OutputEncoding = [System.Text.Encoding]::UTF8; & '${workspaceFolder}/build.ps1' -PackageOnly"
+        ]
+      },
+      "linux": {
+        "command": "pwsh",
+        "args": ["-File", "${workspaceFolder}/build.ps1", "-PackageOnly"]
+      },
+      "osx": {
+        "command": "pwsh",
+        "args": ["-File", "${workspaceFolder}/build.ps1", "-PackageOnly"]
+      },
+      "problemMatcher": [],
+      "detail": "Packages the driver using data from `local-config.json` without deploying it. Skips placeholder validation."
+    },
+    {
+      "label": "PBG: Update Capabilities",
+      "type": "shell",
+      "windows": {
+        "command": "pwsh",
+        "args": [
+          "-NoProfile",
+          "-ExecutionPolicy", "Bypass",
+          "-Command", "[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; $OutputEncoding = [System.Text.Encoding]::UTF8; & '${workspaceFolder}/build.ps1' -UpdateCapabilities"
+        ]
+      },
+      "linux": {
+        "command": "pwsh",
+        "args": ["-File", "${workspaceFolder}/build.ps1", "-UpdateCapabilities"]
+      },
+      "osx": {
+        "command": "pwsh",
+        "args": ["-File", "${workspaceFolder}/build.ps1", "-UpdateCapabilities"]
+      },
+      "problemMatcher": [],
+      "detail": "Updates or creates SmartThings capabilities and presentations based on the configuration in `local-config.json`."
+    },
+    {
+      "label": "PBG: Remove and Clean Up Driver",
+      "type": "shell",
+      "windows": {
+        "command": "pwsh",
+        "args": [
+          "-NoProfile",
+          "-ExecutionPolicy", "Bypass",
+          "-Command", "[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; $OutputEncoding = [System.Text.Encoding]::UTF8; & '${workspaceFolder}/build.ps1' -RemoveDriver"
+        ]
+      },
+      "linux": {
+        "command": "pwsh",
+        "args": ["-File", "${workspaceFolder}/build.ps1", "-RemoveDriver"]
+      },
+      "osx": {
+        "command": "pwsh",
+        "args": ["-File", "${workspaceFolder}/build.ps1", "-RemoveDriver"]
+      },
+      "problemMatcher": [],
+      "detail": "Completely removes the driver, channel assignment, and capabilities using data from `local-config.json`."
+    },
+    {
+      "label": "PBG: Manual Work Mode",
+      "type": "shell",
+      "windows": {
+        "command": "pwsh",
+        "args": [
+          "-NoProfile",
+          "-ExecutionPolicy", "Bypass",
+          "-Command", "[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; $OutputEncoding = [System.Text.Encoding]::UTF8; & '${workspaceFolder}/build.ps1' -ManualWork"
+        ]
+      },
+      "linux": {
+        "command": "pwsh",
+        "args": ["-File", "${workspaceFolder}/build.ps1", "-ManualWork"]
+      },
+      "osx": {
+        "command": "pwsh",
+        "args": ["-File", "${workspaceFolder}/build.ps1", "-ManualWork"]
+      },
+      "problemMatcher": [],
+      "detail": "Replaces placeholders from `local-config.json`, pauses for manual work by the user, then restores."
+    },
+    {
+      "label": "PBG: Run Tests",
+      "type": "shell",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "windows": {
+        "command": "pwsh",
+        "args": [
+          "-NoProfile",
+          "-ExecutionPolicy", "Bypass",
+          "-Command", "[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; $OutputEncoding = [System.Text.Encoding]::UTF8; & '${workspaceFolder}/test.ps1'"
+        ]
+      },
+      "linux": {
+        "command": "pwsh",
+        "args": ["-File", "${workspaceFolder}/test.ps1"]
+      },
+      "osx": {
+        "command": "pwsh",
+        "args": ["-File", "${workspaceFolder}/test.ps1"]
+      },
+      "problemMatcher": [],
+      "detail": "Runs the comprehensive Python-based test suite using pytest with coverage reporting for the Pit Boss Grill SmartThings Edge Driver."
+    },
+    {
+      "label": "PBG: Smart Version Update",
+      "type": "shell",
+      "windows": {
+        "command": "pwsh",
+        "args": [
+          "-NoProfile",
+          "-ExecutionPolicy", "Bypass",
+          "-Command", "[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; $OutputEncoding = [System.Text.Encoding]::UTF8; & '${workspaceFolder}/build.ps1' -SmartVersion -VersionOnly"
+        ]
+      },
+      "linux": {
+        "command": "pwsh",
+        "args": [
+          "-File",
+          "${workspaceFolder}/build.ps1",
+          "-SmartVersion",
+          "-VersionOnly"
+        ]
+      },
+      "osx": {
+        "command": "pwsh",
+        "args": [
+          "-File",
+          "${workspaceFolder}/build.ps1",
+          "-SmartVersion",
+          "-VersionOnly"
+        ]
+      },
+      "problemMatcher": [],
+      "detail": "Intelligently updates versions for modified files based on Git changes (version-only, no build/deploy)."
+    },
+    {
+      "label": "PBG: Bump All Versions",
+      "type": "shell",
+      "windows": {
+        "command": "pwsh",
+        "args": [
+          "-NoProfile",
+          "-ExecutionPolicy", "Bypass",
+          "-Command", "[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; $OutputEncoding = [System.Text.Encoding]::UTF8; & '${workspaceFolder}/build.ps1' -BumpAllVersions"
+        ]
+      },
+      "linux": {
+        "command": "pwsh",
+        "args": ["-File", "${workspaceFolder}/build.ps1", "-BumpAllVersions"]
+      },
+      "osx": {
+        "command": "pwsh",
+        "args": ["-File", "${workspaceFolder}/build.ps1", "-BumpAllVersions"]
+      },
+      "problemMatcher": [],
+      "detail": "Updates all project files to today's version (major release)."
+    },
+    {
+      "label": "PBG: Check Versions",
+      "type": "shell",
+      "windows": {
+        "command": "pwsh",
+        "args": [
+          "-NoProfile",
+          "-ExecutionPolicy", "Bypass",
+          "-Command", "[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; $OutputEncoding = [System.Text.Encoding]::UTF8; & '${workspaceFolder}/build.ps1' -CheckVersions"
+        ]
+      },
+      "linux": {
+        "command": "pwsh",
+        "args": ["-File", "${workspaceFolder}/build.ps1", "-CheckVersions"]
+      },
+      "osx": {
+        "command": "pwsh",
+        "args": ["-File", "${workspaceFolder}/build.ps1", "-CheckVersions"]
+      },
+      "problemMatcher": [],
+      "detail": "Validates version consistency and readiness for release."
+    },
+    {
+      "label": "PBG: Smart Build and Deploy",
+      "type": "shell",
+      "group": "build",
+      "windows": {
+        "command": "pwsh",
+        "args": [
+          "-NoProfile",
+          "-ExecutionPolicy", "Bypass",
+          "-Command", "[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; $OutputEncoding = [System.Text.Encoding]::UTF8; & '${workspaceFolder}/build.ps1' -SmartVersion"
+        ]
+      },
+      "linux": {
+        "command": "pwsh",
+        "args": ["-File", "${workspaceFolder}/build.ps1", "-SmartVersion"]
+      },
+      "osx": {
+        "command": "pwsh",
+        "args": ["-File", "${workspaceFolder}/build.ps1", "-SmartVersion"]
+      },
+      "problemMatcher": [],
+      "detail": "Updates versions for modified files, then builds and deploys the driver."
+    }
+  ]
+}

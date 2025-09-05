@@ -1,0 +1,44 @@
+{
+  "id": "{{NAMESPACE}}.pelletStatus",
+  "version": 1,
+  "status": "proposed",
+  "name": "Pellet Status",
+  "attributes": {
+    "fanState": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "enum": ["ON", "OFF"]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "augerState": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "enum": ["ON", "OFF"]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "ignitorState": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "enum": ["ON", "OFF"]
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

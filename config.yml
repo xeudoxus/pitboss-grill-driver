@@ -1,0 +1,66 @@
+# Pit Boss Grill SmartThings Edge Driver
+# Created by: xeudoxus
+# Version: 2025.9.4
+# License: Apache License 2.0 - see LICENSE file for details
+# Disclaimer: Third-party driver not endorsed by Pit Boss or Dansons. Use at your own risk. No warranty provided.
+
+name: 'Pit Boss Grill Driver'
+description: 'SmartThings Edge driver for Pit Boss WiFi Grills/Smokers (Only tested on PB1285KC, may work on other models) - Reverse engineered Direct API communication'
+packageKey: pitboss-grill-driver
+Version: "2025.9.4"
+author: xeudoxus
+permissions:
+  lan: {}
+  discovery: {}
+
+metadata:
+  driverType: "edge"
+  language: "lua"
+  manufacturer: "Pit Boss"
+  
+deviceTypes:
+  - name: "Pit Boss Grill"
+    deviceTypeId: "PitBossGrill"
+    deviceTypeName: "Pit Boss WiFi Grill"
+    ocfDeviceType: "oic.d.oven"
+    
+networkPermissions:
+  - type: "tcp"
+    ports: ["80", "443"]
+
+hubRequirements:
+  minimumFirmwareVersion: "000.046.00012"
+
+capabilities:
+  - "switch"
+  - "temperatureMeasurement"
+  - "thermostatHeatingSetpoint"
+  - "panicAlarm" #TODO: Maybe change to tamperAlert later
+  - "refresh"
+  - "powerMeter" # Virtual power meter capability to estimate power consumption
+  - "{{NAMESPACE}}.grillTemp"
+  - "{{NAMESPACE}}.grillStatus"
+  - "{{NAMESPACE}}.temperatureProbes"
+  - "{{NAMESPACE}}.pelletStatus"
+  - "{{NAMESPACE}}.lightControl"
+  - "{{NAMESPACE}}.primeControl"
+  - "{{NAMESPACE}}.temperatureUnit"
+
+profiles:
+  - "pitboss-grill-profile"
+  - "virtual-main"
+  - "virtual-probe-1"
+  - "virtual-probe-2"
+  - "virtual-probe-3"
+  - "virtual-probe-4"
+  - "virtual-light"
+  - "virtual-prime"
+  - "virtual-at-temp"
+  - "virtual-error"
+
+supportedDeviceIntegrationProfiles:
+  - "generic"
+  - "lan"
+  
+presentationId: {{PROFILE_ID}}
+manufacturerName: SmartThingsCommunity

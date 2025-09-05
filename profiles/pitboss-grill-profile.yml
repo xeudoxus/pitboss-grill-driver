@@ -1,0 +1,334 @@
+# Pit Boss Grill Device Profile
+# Created by: xeudoxus
+# Version: 2025.9.2
+# 
+# SmartThings Edge Driver Profile for Pit Boss WiFi Grills
+# Uses reverse-engineered direct API communication (no cloud dependency)
+# Defines device capabilities, UI layout, and user preferences
+# 
+# Virtual Devices for Enhanced Integration:
+# Creates optional separate SmartThings devices for Google Home/Voice Assistant integration:
+#   * Virtual Grill Main (temperature + power switch + power meter)
+#   * Virtual Probe 1 & 2 (individual temperature sensors)
+#   * Virtual Grill Light (dedicated light switch)
+#   * Virtual Grill Prime (prime control switch)
+#   * Virtual At Temp (switch indicating when target temp is reached)
+#   * Virtual Error (switch indicating all grill errors)
+# 
+# Note: Main driver exposes standard SmartThings capabilities (temperature sensors, 
+# thermostat, switch) for automations and historical data. Virtual devices duplicate 
+# some capabilities specifically for Google Home voice control compatibility.
+# 
+# License: Apache License 2.0 - see LICENSE file for details
+# Disclaimer: Third-party driver not endorsed by Pit Boss or Dansons. Use at your own risk. No warranty provided.
+
+id: {{PROFILE_ID}}
+name: pitboss-grill-profile
+
+components:
+- id: main
+  capabilities:
+  - id: refresh
+    version: 1
+    group: main
+  # Custom Pit Boss capabilities
+  - id: {{NAMESPACE}}.grillTemp
+    version: 1
+    group: main
+  - id: {{NAMESPACE}}.temperatureProbes
+    version: 1
+    group: sensors
+  - id: {{NAMESPACE}}.pelletStatus
+    version: 1
+    group: sensors
+  - id: {{NAMESPACE}}.lightControl
+    version: 1
+    group: main
+  - id: {{NAMESPACE}}.primeControl
+    version: 1
+    group: main
+  - id: {{NAMESPACE}}.temperatureUnit
+    version: 1
+    group: main
+  - id: {{NAMESPACE}}.grillStatus
+    version: 1
+    group: main
+  categories:
+  - name: Oven
+
+- id: Standard_Grill # Primary control component for voice commands and SmartThings integration
+  capabilities:
+  - id: temperatureMeasurement
+    version: 1
+    group: temperature
+  - id: thermostatHeatingSetpoint
+    version: 1
+    config:
+      values:
+        - key: heatingSetpoint.value
+          step: 5
+    group: temperature
+  - id: switch
+    version: 1
+    group: power
+#  - id: powerMeter
+#    version: 1
+#    group: power
+
+- id: probe1 # Temperature probe 1 component
+  capabilities:
+    - id: temperatureMeasurement
+      version: 1
+
+- id: probe2 # Temperature probe 2 component
+  capabilities:
+    - id: temperatureMeasurement
+      version: 1
+
+- id: Grill_Error # Error reporting component
+  capabilities:
+  - id: panicAlarm #TODO: Maybe change to tamperAlert later
+    version: 1
+
+# Detail view layout - controls order in SmartThings app
+detailView:
+  # 1. Power control - always visible
+  - component: Standard_Grill
+    capability: switch
+    version: 1
+    group: power
+
+  # 2. Current grill temperature - always visible for monitoring cooldown
+  - component: main
+    capability: {{NAMESPACE}}.grillTemp
+    version: 1
+    group: temperature
+
+  # 3. Target temperature - only when powered on
+  - component: Standard_Grill
+    capability: thermostatHeatingSetpoint
+    version: 1
+    group: temperature
+
+  # 4. Temperature probes - always visible for monitoring
+  - component: main
+    capability: {{NAMESPACE}}.temperatureProbes
+    version: 1
+    group: sensors
+
+  # 5. Pellet system status - always visible (fan runs during cooldown)
+  - component: main
+    capability: {{NAMESPACE}}.pelletStatus
+    version: 1
+    group: sensors
+
+  # 6. Light control - only when powered on
+  - component: main
+    capability: {{NAMESPACE}}.lightControl
+    version: 1
+    group: main
+
+  # 7. Prime control - only when powered on
+  - component: main
+    capability: {{NAMESPACE}}.primeControl
+    version: 1
+    group: main
+
+  # 8. Temperature unit selection
+  - component: main
+    capability: {{NAMESPACE}}.temperatureUnit
+    version: 1
+    group: main
+
+  # 9. Status messages and errors
+  - component: main
+    capability: {{NAMESPACE}}.grillStatus
+    version: 1
+    group: main
+
+  # 10. Manual refresh
+  - component: main
+    capability: refresh
+    version: 1
+    group: main
+
+# User preferences for device configuration
+# These settings allow customization of the driver behavior and calibration
+preferences:
+  - name: "ipAddress"
+    title: "Device IP Address"
+    description: "Static IP address of the Pit Boss Grill in format xxx.xxx.xxx.xxx (e.g., 192.168.4.1). Each segment must be 0-255, with first segment 1-255. Leave default for auto-discovery."
+    required: true
+    preferenceType: string
+    definition:
+      stringType: text
+      default: "192.168.4.1"
+  
+  - name: "refreshInterval"
+    title: "Status Update Interval"
+    description: "How often to check grill status when active (seconds)"
+    required: false
+    preferenceType: integer
+    definition:
+      minimum: 5
+      maximum: 300
+      default: 30
+
+  - name: "autoRediscovery"
+    title: "Auto IP Rediscovery"
+    description: "Automatically scan network to find grill if IP changes (only when DEVICE IP ADDRESS is default). Disable to prevent network scanning when grill is offline for extended periods."
+    required: false
+    preferenceType: boolean
+    definition:
+      default: false
+
+  # Temperature offset calibration preferences
+  - name: "grillOffset"
+    title: "Main Grill Temperature Offset"
+    description: "Calibration offset from 32°F ice water reference (negative if reading is too high)"
+    required: false
+    preferenceType: integer
+    definition:
+      minimum: -25
+      maximum: 25
+      default: 0
+      
+  - name: "probe1Offset"
+    title: "Probe 1 Temp Offset"
+    description: "Calibration offset from 32°F ice water reference (negative if reading is too high)"
+    required: false
+    preferenceType: integer
+    definition:
+      minimum: -25
+      maximum: 25
+      default: 0
+
+  - name: "probe2Offset"
+    title: "Probe 2 Temp Offset"
+    description: "Calibration offset from 32°F ice water reference (negative if reading is too high)"
+    required: false
+    preferenceType: integer
+    definition:
+      minimum: -25
+      maximum: 25
+      default: 0
+
+  - name: "probe3Offset"
+    title: "Probe 3 Temp Offset"
+    description: "Calibration offset from 32°F ice water reference (negative if reading is too high)"
+    required: false
+    preferenceType: integer
+    definition:
+      minimum: -25
+      maximum: 25
+      default: 0
+
+  - name: "probe4Offset"
+    title: "Probe 4 Temp Offset"
+    description: "Calibration offset from 32°F ice water reference (negative if reading is too high)"
+    required: false
+    preferenceType: integer
+    definition:
+      minimum: -25
+      maximum: 25
+      default: 0
+
+  # ============================================================================
+  # VIRTUAL DEVICES FOR GOOGLE HOME/VOICE ASSISTANT INTEGRATION
+  # ============================================================================
+  # 
+  # The main driver device uses complex custom capabilities that Google Home
+  # cannot import or recognize. Virtual devices solve this by creating separate
+  # SmartThings devices with simple, Google Home-compatible capabilities.
+  #
+  # IMPORTANT SETUP STEPS:
+  # 1. Enable desired virtual devices below
+  # 2. Ask Google: "Hey Google, resync devices" (assumes SmartThings already linked)
+  # 3. In Google Home app, rename devices with "Grill" prefix (e.g., "Grill Light")
+  # 4. Add devices to appropriate rooms for best voice recognition
+  #
+  # VOICE COMMAND EXAMPLES (after proper naming):
+  # - "Hey Google, turn off the Grill"
+  # - "Hey Google, what's the Grill Temperature?"
+  # - "Hey Google, turn on the Grill Light"
+  #
+  # NOTE: Virtual devices duplicate some main driver capabilities specifically
+  # for voice control. Main driver still provides all functionality, automations,
+  # and historical data through standard SmartThings capabilities.
+  # ============================================================================
+
+  - name: "enableVirtualGrillMain"
+    title: "Virtual Grill Main"
+    description: "Create virtual device with grill temperature and power switch (For Google Home)"
+    required: false
+    preferenceType: boolean
+    definition:
+      default: false
+      
+  - name: "enableVirtualProbe1"
+    title: "Virtual Grill Probe 1"
+    description: "Create virtual temperature sensor for Grill Probe 1 (For Google Home)"
+    required: false
+    preferenceType: boolean
+    definition:
+      default: false
+      
+  - name: "enableVirtualProbe2"
+    title: "Virtual Grill Probe 2"
+    description: "Create virtual temperature sensor for Grill Probe 2 (For Google Home)"
+    required: false
+    preferenceType: boolean
+    definition:
+      default: false
+      
+  - name: "enableVirtualProbe3"
+    title: "Virtual Grill Probe 3"
+    description: "Create virtual temperature sensor for Grill Probe 3 (For Google Home) - requires compatible hardware"
+    required: false
+    preferenceType: boolean
+    definition:
+      default: false
+      
+  - name: "enableVirtualProbe4"
+    title: "Virtual Grill Probe 4"
+    description: "Create virtual temperature sensor for Grill Probe 4 (For Google Home) - requires compatible hardware"
+    required: false
+    preferenceType: boolean
+    definition:
+      default: false
+      
+  - name: "enableVirtualGrillLight"
+    title: "Virtual Grill Light"
+    description: "Create virtual light switch for grill interior light (For Google Home)"
+    required: false
+    preferenceType: boolean
+    definition:
+      default: false
+      
+  - name: "enableVirtualGrillPrime"
+    title: "Virtual Grill Prime"
+    description: "Create virtual switch for grill prime control (For Google Home)"
+    required: false
+    preferenceType: boolean
+    definition:
+      default: false
+      
+  - name: "enableVirtualAtTemp"
+    title: "Virtual Grill At Temp"
+    description: "Create virtual switch that turns on when grill reaches target temperature (For Google Home)"
+    required: false
+    preferenceType: boolean
+    definition:
+      default: false
+      
+  - name: "enableVirtualError"
+    title: "Virtual Grill Error"
+    description: "Create virtual switch that turns on when grill has any error (For Google Home)"
+    required: false
+    preferenceType: boolean
+    definition:
+      default: false
+
+metadata:
+  mnmn: SmartThingsCommunity
+  vid: generic-oven

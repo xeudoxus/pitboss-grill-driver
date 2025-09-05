@@ -1,0 +1,11 @@
+name: virtual-error
+components:
+  - id: main
+    capabilities:
+      - id: switch
+        version: 1
+    categories:
+      - name: Siren
+metadata:
+  mnmn: SmartThingsCommunity
+  vid: generic-siren

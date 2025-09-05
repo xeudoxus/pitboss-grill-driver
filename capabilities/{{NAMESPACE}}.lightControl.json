@@ -1,0 +1,35 @@
+{
+  "id": "{{NAMESPACE}}.lightControl",
+  "version": 1,
+  "status": "proposed",
+  "name": "Light Control",
+  "attributes": {
+    "lightState": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "enum": ["ON", "OFF"]
+          }
+        },
+        "additionalProperties": false
+      },
+      "setter": "setLightState"
+    }
+  },
+  "commands": {
+    "setLightState": {
+      "name": "setLightState",
+      "arguments": [
+        {
+          "name": "state",
+          "schema": {
+            "type": "string",
+            "enum": ["ON", "OFF"]
+          }
+        }
+      ]
+    }
+  }
+}

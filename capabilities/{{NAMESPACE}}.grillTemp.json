@@ -1,0 +1,73 @@
+{
+  "id": "{{NAMESPACE}}.grillTemp",
+  "version": 1,
+  "status": "proposed",
+  "name": "Grill Temp",
+  "description": "Manages grill temperature monitoring and control",
+  "attributes": {
+    "currentTemp": {
+      "description": "Current grill chamber temperature reading",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "description": "Temperature value or status ('off' when grill is inactive)"
+          },
+          "unit": {
+            "type": "string",
+            "enum": ["F", "C"],
+            "description": "Temperature unit (Fahrenheit or Celsius)"
+          }
+        },
+        "additionalProperties": false,
+        "required": ["value"]
+      }
+    },
+    "targetTemp": {
+      "description": "Target temperature for grill thermostat control",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "description": "Desired temperature value or status"
+          },
+          "unit": {
+            "type": "string",
+            "enum": ["F", "C"],
+            "description": "Temperature unit (Fahrenheit or Celsius)"
+          }
+        },
+        "additionalProperties": false,
+        "required": ["value"]
+      }
+    }
+  },
+  "commands": {
+    "setTargetTemperature": {
+      "name": "setTargetTemperature",
+      "description": "Sets the target temperature for the grill",
+      "arguments": [{
+        "name": "temperature",
+        "description": "Target temperature setting with unit",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string",
+              "description": "Temperature value to set"
+            },
+            "unit": {
+              "type": "string",
+              "enum": ["F", "C"],
+              "description": "Temperature unit (Fahrenheit or Celsius)"
+            }
+          },
+          "additionalProperties": false,
+          "required": ["value"]
+        }
+      }]
+    }
+  }
+}

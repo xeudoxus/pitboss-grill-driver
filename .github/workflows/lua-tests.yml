@@ -1,0 +1,51 @@
+name: Lua Tests
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    name: Run Lua 5.3 tests (Windows)
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Set up Lua 5.3
+        shell: pwsh
+        run: |
+          curl -L -o lua.zip "https://sourceforge.net/projects/luabinaries/files/5.3.5/Tools%20Executables/lua-5.3.5_Win32_bin.zip/download"
+          Expand-Archive lua.zip -DestinationPath C:\lua
+          Write-Host "Contents of C:\lua after extraction:"
+          Get-ChildItem -Path C:\lua
+          Write-Host "Recursive contents of C:\lua:"
+          Get-ChildItem -Path C:\lua -Recurse
+          $luaPath = Get-ChildItem -Path C:\lua -Recurse -Filter "*.exe" | Where-Object { $_.Name -like "lua*" } | Select-Object -First 1
+          if ($luaPath) {
+            $luaDir = $luaPath.DirectoryName
+            Add-Content -Path $env:GITHUB_PATH -Value $luaDir
+            & "$luaDir\$($luaPath.Name)" -v
+          } else {
+            Write-Error "lua.exe not found in extracted files"
+            exit 1
+          }
+
+      - name: Run tests
+        shell: pwsh
+        run: |
+          pytest tests/ -v

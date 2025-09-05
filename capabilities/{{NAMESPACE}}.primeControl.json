@@ -1,0 +1,35 @@
+{
+  "id": "{{NAMESPACE}}.primeControl",
+  "version": 1,
+  "status": "proposed",
+  "name": "Prime Control",
+  "attributes": {
+    "primeState": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "enum": ["ON", "OFF"]
+          }
+        },
+        "additionalProperties": false
+      },
+      "setter": "setPrimeState"
+    }
+  },
+  "commands": {
+    "setPrimeState": {
+      "name": "setPrimeState",
+      "arguments": [
+        {
+          "name": "state",
+          "schema": {
+            "type": "string",
+            "enum": ["ON", "OFF"]
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,67 @@
+dashboard:
+  states:
+    - label: 'Fan: {{fanState.value}}'
+      alternatives:
+        - key: 'ON'
+          value: Fan ON
+          type: active
+        - key: 'OFF'
+          value: Fan OFF
+          type: inactive
+      visibleCondition: '{{switch.value == "on"}}'
+    - label: 'Auger: {{augerState.value}}'
+      alternatives:
+        - key: 'ON'
+          value: Auger ON
+          type: active
+        - key: 'OFF'
+          value: Auger OFF
+          type: inactive
+      visibleCondition: '{{switch.value == "on"}}'
+    - label: 'Ignitor: {{ignitorState.value}}'
+      alternatives:
+        - key: 'ON'
+          value: Ignitor ON
+          type: active
+        - key: 'OFF'
+          value: Ignitor OFF
+          type: inactive
+      visibleCondition: '{{switch.value == "on"}}'
+  actions: []
+  panelItems: []
+detailView:
+  - label: Fan
+    displayType: state
+    state:
+      label: '{{fanState.value}}'
+      alternatives:
+        - key: 'ON'
+          value: 'ON'
+          type: active
+        - key: 'OFF'
+          value: 'OFF'
+          type: inactive
+  - label: Auger
+    displayType: state
+    state:
+      label: '{{augerState.value}}'
+      alternatives:
+        - key: 'ON'
+          value: 'ON'
+          type: active
+        - key: 'OFF'
+          value: 'OFF'
+          type: inactive
+  - label: Ignitor
+    displayType: state
+    state:
+      label: '{{ignitorState.value}}'
+      alternatives:
+        - key: 'ON'
+          value: 'ON'
+          type: active
+        - key: 'OFF'
+          value: 'OFF'
+          type: inactive
+id: {{NAMESPACE}}.pelletStatus
+version: 1

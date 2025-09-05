@@ -1,0 +1,49 @@
+dashboard:
+  states:
+    - label: '{{primeState.value}}'
+      alternatives:
+        - key: 'ON'
+          value: Prime ON
+          type: active
+        - key: 'OFF'
+          value: Prime OFF
+          type: inactive
+  actions:
+    - displayType: toggleSwitch
+      toggleSwitch:
+        command:
+          name: setPrimeState
+          'on': 'ON'
+          'off': 'OFF'
+          argumentType: string
+        state:
+          value: primeState.value
+          'on': 'ON'
+          'off': 'OFF'
+          valueType: string
+  basicPlus: []
+detailView:
+  - label: Prime
+    displayType: toggleSwitch
+    toggleSwitch:
+      command:
+        name: setPrimeState
+        'on': 'ON'
+        'off': 'OFF'
+        argumentType: string
+      state:
+        value: primeState.value
+        'on': 'ON'
+        'off': 'OFF'
+        valueType: string
+        label: '{{primeState.value}}'
+        alternatives:
+          - key: 'ON'
+            value: Prime ON
+            type: active
+          - key: 'OFF'
+            value: Prime OFF
+            type: inactive
+
+id: {{NAMESPACE}}.primeControl
+version: 1

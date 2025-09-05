@@ -1,0 +1,27 @@
+{
+  "id": "{{NAMESPACE}}.grillStatus",
+  "version": 1,
+  "status": "proposed",
+  "name": "Grill Status",
+  "description": "Monitors and reports grill operational status and messages",
+  "ephemeral": false,
+  "attributes": {
+    "lastMessage": {
+      "description": "Most recent status message or alert from the grill",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "maxLength": 255,
+            "description": "Status message content (limited to 255 characters)"
+          }
+        },
+        "additionalProperties": false,
+        "required": ["value"]
+      },
+      "enumCommands": []
+    }
+  },
+  "commands": {}
+}

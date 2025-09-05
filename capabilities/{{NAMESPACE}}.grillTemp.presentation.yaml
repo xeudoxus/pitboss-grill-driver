@@ -1,0 +1,49 @@
+dashboard:
+  states:
+    - label: 'Current: {{currentTemp.value}}°{{currentTemp.unit}}'
+      alternatives:
+        - key: "off"
+          value: "Inactive"
+          type: "inactive"
+        - key: "on"
+          value: 'Current: {{currentTemp.value}}°{{currentTemp.unit}}'
+          type: "active"
+    - label: 'Target: {{targetTemp.value}}°{{targetTemp.unit}}'
+      alternatives:
+        - key: "off"
+          value: "Inactive"
+          type: "inactive"
+        - key: "on"
+          value: 'Current: {{targetTemp.value}}°{{targetTemp.unit}}'
+          type: "active"
+  actions: []
+  panelItems: []
+detailView:
+  - label: Current Grill Temp
+    displayType: state
+    state:
+      value: currentTemp.value
+      unit: currentTemp.unit
+      label: '{{currentTemp.value}}{{currentTemp.unit}}'
+      alternatives:
+        - key: "off"
+          value: "Inactive"
+          type: "inactive"
+        - key: "on"
+          value: '{{currentTemp.value}}{{currentTemp.unit}}'
+          type: "active"
+  - label: "Set Target Temp"
+    displayType: state
+    state:
+      value: targetTemp.value
+      unit: targetTemp.unit
+      label: '{{targetTemp.value}}{{targetTemp.unit}}'
+      alternatives:
+        - key: "off"
+          value: "Inactive"
+          type: "inactive"
+        - key: "on"
+          value: '{{targetTemp.value}}{{targetTemp.unit}}'
+          type: "active"
+id: {{NAMESPACE}}.grillTemp
+version: 1

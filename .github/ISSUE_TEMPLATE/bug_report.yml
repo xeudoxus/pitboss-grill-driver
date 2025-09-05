@@ -1,0 +1,82 @@
+name: Bug Report
+description: Report a bug with the Pit Boss Grill driver
+title: "[BUG] "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Prerequisites
+      description: Please confirm you have completed these steps
+      options:
+        - label: I have searched existing issues for this problem
+          required: true
+        - label: I have read the [troubleshooting guide](https://github.com/xeudoxus/pitboss-grill-driver/wiki/Troubleshooting)
+          required: true
+
+  - type: input
+    id: grill-model
+    attributes:
+      label: Grill Model
+      description: What model Pit Boss grill are you using?
+      placeholder: e.g., PB1285KC, PB700FB, etc.
+    validations:
+      required: true
+
+  - type: input
+    id: firmware-version
+    attributes:
+      label: Grill Firmware Version
+      description: What firmware version is your grill running?
+      placeholder: e.g., 0.5.7, 0.6.2, etc.
+    validations:
+      required: true
+
+  - type: input
+    id: driver-version
+    attributes:
+      label: Driver Version
+      description: What version of the driver are you using?
+      placeholder: e.g., 2025.9.2
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe the bug and what you expected to happen
+      placeholder: Tell us what you see!
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Provide steps to reproduce the behavior
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. Scroll down to '...'
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: Please copy and paste any relevant log output (from SmartThings CLI or device logs)
+      render: shell
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any other context about the problem here

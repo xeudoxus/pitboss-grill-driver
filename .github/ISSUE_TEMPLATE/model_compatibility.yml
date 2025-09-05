@@ -1,0 +1,123 @@
+name: Model Compatibility Report
+description: Report compatibility results for a Pit Boss grill model
+title: "[COMPATIBILITY] Model: "
+labels: ["model-compatibility", "testing"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Help expand model compatibility by reporting your testing results!
+        
+  - type: input
+    id: grill-model
+    attributes:
+      label: Grill Model
+      description: Full model number of your Pit Boss grill
+      placeholder: e.g., PB1285KC, PB700FB-1, PBV3P1, etc.
+    validations:
+      required: true
+
+  - type: input
+    id: firmware-version
+    attributes:
+      label: Firmware Version
+      description: Grill firmware version
+      placeholder: e.g., 0.5.7, 0.6.2
+    validations:
+      required: true
+
+  - type: input
+    id: purchase-year
+    attributes:
+      label: Purchase Year
+      description: What year did you purchase this grill?
+      placeholder: e.g., 2024, 2023
+    validations:
+      required: true
+
+  - type: dropdown
+    id: compatibility-status
+    attributes:
+      label: Compatibility Status
+      description: How well does the driver work with your grill?
+      options:
+        - "✅ Fully Compatible - All features working"
+        - "⚠️ Mostly Compatible - Minor issues"
+        - "❌ Incompatible - Major issues"
+        - "🔄 Testing in Progress"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: features-tested
+    attributes:
+      label: Features Tested
+      description: Which features have you tested?
+      options:
+        - label: Power On/Off
+        - label: Temperature Control
+        - label: Temperature Monitoring
+        - label: Probe Temperature Readings
+        - label: Interior Light Control
+        - label: Prime Function
+        - label: Virtual Devices
+        - label: Google Home Integration
+
+  - type: textarea
+    id: working-features
+    attributes:
+      label: Working Features
+      description: List features that work correctly
+      placeholder: e.g., All temperature functions, light control, probes 1-2
+
+  - type: textarea
+    id: issues-found
+    attributes:
+      label: Issues or Limitations
+      description: Describe any problems or features that don't work
+      placeholder: e.g., Probe 3 always shows disconnected, prime function times out
+
+  - type: textarea
+    id: testing-notes
+    attributes:
+      label: Additional Testing Notes
+      description: Any other observations or details about compatibility
+
+  - type: textarea
+    id: system-info
+    attributes:
+      label: System Information (Optional but Helpful)
+      description: |
+        To help with compatibility analysis, please provide the output of your grill's system info.
+        
+        **How to get this:**
+        1. Replace `192.168.x.x` with your grill's IP address
+        2. Visit: `http://192.168.x.x/rpc/Sys.GetInfo` in your browser
+        3. Copy the JSON output below, but **remove personal information** (id, mac, wifi.ssid)
+        
+        **Example (with personal info removed):**
+        ```json
+        {
+          "app": "PitBoss",
+          "fw_version": "42.42",
+          "fw_id": "20201001-041336",
+          "mg_version": "2.17.0",
+          "mg_id": "20201001-041331/2.17.0-gc31a745",
+          "arch": "esp32",
+          "uptime": 180875,
+          "public_key": null,
+          "ram_size": 232512,
+          "ram_free": 62864,
+          "ram_min_free": 36148,
+          "fs_size": 233681,
+          "fs_free": 97388,
+          "wifi": {
+            "sta_ip": "192.168.x.x",
+            "ap_ip": "192.168.4.1",
+            "status": "got ip",
+            "ssid": "[REMOVED]"
+          }
+        }
+        ```
+      placeholder: Paste sanitized system info JSON here (optional)
+      render: json

@@ -1,0 +1,64 @@
+name-template: v$RESOLVED_VERSION 📚
+tag-template: v$RESOLVED_VERSION
+categories:
+  - title: 🔥 Features
+    labels:
+      - feature
+      - enhancement
+  - title: 🐞 Bug Fixes
+    labels:
+      - fix
+      - bug
+  - title: 📚 Documentation
+    labels:
+      - documentation
+      - docs
+      - wiki
+  - title: 🔧 Maintenance
+    labels:
+      - chore
+      - refactor
+      - ci
+      - build
+      - test
+      - maintenance
+change-template: "- $TITLE @$AUTHOR (#$NUMBER)"
+change-title-escapes: \<*_& # You can add # and @ to disable mentions, and add ` to disable code blocks.
+version-resolver:
+  major:
+    labels:
+      - breaking-change
+  minor:
+    labels:
+      - feature
+      - enhancement
+  patch:
+    labels:
+      - fix
+      - bug
+      - documentation
+      - chore
+      - refactor
+      - ci
+      - build
+      - test
+      - maintenance
+  default: patch
+template: |
+  ## Changes
+
+  $CHANGES
+
+  **Full Changelog**: https://github.com/$OWNER/$REPOSITORY/compare/$PREVIOUS_TAG...v$RESOLVED_VERSION
+
+  ---
+
+  ## 📚 Documentation
+
+  For detailed guides and troubleshooting, please visit our [**Wiki**](https://github.com/$OWNER/$REPOSITORY/wiki).
+
+  ## 🙏 Credits
+
+  Thanks to all the contributors who helped make this release possible!
+
+  $CONTRIBUTORS
