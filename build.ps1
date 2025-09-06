@@ -11,7 +11,7 @@
 .NOTES
     File Name      : build.ps1
     Author         : xeudoxus
-    Version        : 1.0.0
+    Version        : 1.0.1
     Created        : 2025
     Repository     : https://github.com/xeudoxus/pitboss-grill-driver
     License        : Apache License 2.0
@@ -357,6 +357,7 @@ if ($SmartVersion -and (Test-Path "version.json")) {
     
     Write-Info "Smart Version Management - Analyzing project state..."
 
+    # Step 1: Get list of all files in version.json (ONLY for the file list)
     try {
         $versionData = Get-Content "version.json" -Raw | ConvertFrom-Json
     }
@@ -367,17 +368,16 @@ if ($SmartVersion -and (Test-Path "version.json")) {
             version = (Get-Date).ToString($script:DateFormat)
             lastUpdated = (Get-Date).ToString("yyyy-MM-ddTHH:mm:ssZ")
         }
-        
         Save-VersionJson $versionData
     }
 
     Write-Info "Current main version: $($versionData.version)"
 
-    # Check each file and update if needed
+    # Step 2: Begin scan/fix loop - check each file's ACTUAL content and mod date
     $anyFileUpdated = $false
     $versionData.files.PSObject.Properties | ForEach-Object {
         $fileName = $_.Name
-        $trackedVersion = $_.Value
+        $trackedVersion = $_.Value  # We ignore this and trust the file
         
         # Find file path
         $filePaths = Get-FilePathsForTracking $fileName
@@ -386,90 +386,77 @@ if ($SmartVersion -and (Test-Path "version.json")) {
         if ($filePath -and (Test-Path $filePath)) {
             $fileModDate = (Get-Item $filePath).LastWriteTime.ToString($script:DateFormat)
             
-            # For .lua files, also check if Version field is blank/corrupted and needs fixing
-            $needsVersionFieldFix = $false
+            # Read actual file version content (trust the file, not version.json)
+            $actualFileVersion = $null
+            $needsFileContentFix = $false
+            
             if ($fileName -like "*.lua") {
                 $luaContent = Get-Content $filePath -Raw
-                # Check if Version field is blank or missing content after the colon
-                if ($luaContent -match '(?m)^\s*Version:\s*$') {
-                    $needsVersionFieldFix = $true
-                    Write-Warning "Detected blank Version field in $fileName - will fix"
+                if ($luaContent -match '(?m)^\s*Version:\s*([^\r\n]+)') {
+                    $actualFileVersion = $matches[1].Trim()
+                } else {
+                    # Missing Version field
+                    $actualFileVersion = $null
+                    $needsFileContentFix = $true
                 }
-                # Check if Version field doesn't match tracked version
-                elseif ($luaContent -match '(?m)^\s*Version:\s*([^\r\n]+)') {
-                    $fileVersionField = $matches[1].Trim()
-                    if ($fileVersionField -ne $trackedVersion) {
-                        $needsVersionFieldFix = $true
-                        Write-Warning "Detected Version field mismatch in $fileName → file has '$fileVersionField', tracked is '$trackedVersion' - will fix"
-                    }
+            } elseif ($fileName -like "*.yml") {
+                $ymlContent = Get-Content $filePath -Raw
+                if ($ymlContent -match '(?m)^# Version:\s*([^\r\n]+)') {
+                    $actualFileVersion = $matches[1].Trim()
+                } else {
+                    # Missing Version comment
+                    $actualFileVersion = $null
+                    $needsFileContentFix = $true
                 }
-                # Check for log message version mismatches in init.lua
-                if ($fileName -eq "init.lua" -and $luaContent -match 'Starting Pit Boss Grill SmartThings Edge Driver v([0-9.]+)') {
-                    $logVersion = $matches[1]
-                    if ($logVersion -ne $trackedVersion) {
-                        $needsVersionFieldFix = $true
-                        Write-Warning "Detected log message version mismatch in $fileName → log has 'v$logVersion', should be 'v$trackedVersion' - will fix"
-                    }
-                }
-            }
-            # Check config.yml comment version
-            elseif ($fileName -eq "config.yml") {
-                $configContent = Get-Content $filePath -Raw
-                if ($configContent -match '(?m)^# Version:\s*([^\r\n]+)') {
-                    $commentVersion = $matches[1].Trim()
-                    # Config comment should match MAIN version, not individual file tracking
-                    $currentMainVersion = $versionData.version
-                    if ($commentVersion -ne $currentMainVersion) {
-                        $needsVersionFieldFix = $true
-                        Write-Warning "Detected config.yml comment version mismatch → comment has '$commentVersion', should be '$currentMainVersion' - will fix"
-                    }
-                }
+            } else {
+                # For files without version fields, use mod date as "actual version"
+                $actualFileVersion = $fileModDate
             }
             
-            # Compare versions - ALWAYS sync tracked version to actual file mod date
-            try {
-                $fileVersion = [version]"$fileModDate.0"
+            # Compare file's internal version to its modification date
+            if ($actualFileVersion -ne $fileModDate -or $needsFileContentFix) {
+                Write-Success "Updating $fileName → internal version '$actualFileVersion' to match file date '$fileModDate'" -Force
                 
-                # Handle empty or null tracked versions - with extra safety
-                if ([string]::IsNullOrWhiteSpace($trackedVersion) -or $trackedVersion -eq "" -or $trackedVersion -eq $null) {
-                    Write-Success "Adding new file $fileName → setting to $fileModDate (was untracked)" -Force
-                    $versionData.files.$fileName = $fileModDate
-                    $anyFileUpdated = $true
-                } elseif ($trackedVersion -notmatch $versionPattern) {
-                    Write-Warning "Fixing invalid version format in $fileName → '$trackedVersion' to $fileModDate"
+                # Update file's internal version content to match mod date
+                if ($fileName -like "*.lua") {
+                    $luaContent = Get-Content $filePath -Raw
+                    if ($luaContent -match '(?m)^\s*Version:\s*([^\r\n]+)') {
+                        $luaContent = $luaContent -replace '(?m)^\s*Version:\s*[^\r\n]+', "  Version: $fileModDate"
+                    } else {
+                        # Add Version field if missing (this shouldn't happen normally)
+                        $luaContent = "  Version: $fileModDate`n" + $luaContent
+                    }
+                    
+                    # Note: Log message version handling removed - log message no longer contains version
+                    
+                    Set-Content $filePath -Value $luaContent -NoNewline
+                } elseif ($fileName -like "*.yml") {
+                    $ymlContent = Get-Content $filePath -Raw
+                    if ($ymlContent -match '(?m)^# Version:\s*([^\r\n]+)') {
+                        $ymlContent = $ymlContent -replace '(?m)^# Version:\s*[^\r\n]+', "# Version: $fileModDate"
+                    } else {
+                        # Add Version comment if missing
+                        $ymlContent = "# Version: $fileModDate`n" + $ymlContent
+                    }
+                    Set-Content $filePath -Value $ymlContent -NoNewline
+                }
+                
+                # Update version.json tracking to match what we just fixed
+                $versionData.files.$fileName = $fileModDate
+                $anyFileUpdated = $true
+                
+            } else {
+                # File's internal version matches its mod date
+                # Check if version.json tracking is correct
+                if ($trackedVersion -ne $fileModDate) {
+                    Write-Success "Correcting tracking for $fileName → was '$trackedVersion', now '$fileModDate'" -Force
                     $versionData.files.$fileName = $fileModDate
                     $anyFileUpdated = $true
                 } else {
-                    try {
-                        $trackedVersionObj = [version]"$trackedVersion.0"
-                        
-                        if ($fileVersion -gt $trackedVersionObj) {
-                            Write-Success "Updating $fileName → $trackedVersion to $fileModDate (file newer)" -Force
-                            $versionData.files.$fileName = $fileModDate
-                            $anyFileUpdated = $true
-                        } elseif ($fileVersion -lt $trackedVersionObj) {
-                            Write-Warning "Correcting $fileName → $trackedVersion to $fileModDate (tracked version too high)"
-                            $versionData.files.$fileName = $fileModDate
-                            $anyFileUpdated = $true
-                        } elseif ($needsVersionFieldFix) {
-                            Write-Info "Fixing blank Version field in $fileName (version $fileModDate)"
-                            # Don't change tracked version, but mark that file content needs updating
-                            $anyFileUpdated = $true
-                        } else {
-                            if ($Verbose) {
-                                Write-Success "Current $fileName → $trackedVersion (matches file)"
-                            }
-                        }
-                    }
-                    catch {
-                        Write-Error "Failed to parse version '$trackedVersion' for $fileName, fixing to $fileModDate"
-                        $versionData.files.$fileName = $fileModDate
-                        $anyFileUpdated = $true
+                    if ($Verbose) {
+                        Write-Success "Current $fileName → $fileModDate (file and tracking match)" -Force
                     }
                 }
-            }
-            catch {
-                Write-Error "Comparing versions for $fileName → $_"
             }
         }
     }
@@ -554,24 +541,35 @@ if ($SmartVersion -and (Test-Path "version.json")) {
                         }
                     }
                     
-                    # Fix log message in init.lua if needed  
-                    if ($fileName -eq "init.lua") {
-                        if ($luaContent -match 'Starting Pit Boss Grill SmartThings Edge Driver v([0-9.]+)') {
-                            $currentLogVersion = $matches[1]
-                            if ($currentLogVersion -ne $fileModDate) {
-                                Write-Warning "Init.lua log message has 'v$currentLogVersion', updating to 'v$fileModDate'"
-                                $luaContent = $luaContent -replace 'Starting Pit Boss Grill SmartThings Edge Driver v[0-9.]+', "Starting Pit Boss Grill SmartThings Edge Driver v$fileModDate"
-                                $needsContentFix = $true
-                            }
-                        }
-                    }
-                    
                     if ($needsContentFix) {
                         Set-Content $filePath -Value $luaContent -NoNewline
                         Write-Success "Fixed version content in $filePath to match file date $fileModDate" -Force
                     }
                 }
             }
+            }
+            
+            # Fix profile file version content if needed
+            foreach ($fileName in $versionData.files.PSObject.Properties.Name) {
+                if ($fileName -like "*.yml") {
+                    $filePaths = Get-FilePathsForTracking $fileName
+                    $filePath = $filePaths | Where-Object { Test-Path $_ } | Select-Object -First 1
+                    if ($filePath) {
+                        $fileModDate = (Get-Item $filePath).LastWriteTime.ToString($script:DateFormat)
+                        $ymlContent = Get-Content $filePath -Raw
+                        
+                        # Check if Version comment doesn't match the file's own mod date
+                        if ($ymlContent -match '(?m)^# Version:\s*([^\r\n]+)') {
+                            $currentVersionField = $matches[1].Trim()
+                            if ($currentVersionField -ne $fileModDate) {
+                                Write-Warning "File $fileName Version comment '$currentVersionField' doesn't match file date '$fileModDate'"
+                                $ymlContent = $ymlContent -replace '(?m)^# Version:\s*[^\r\n]+', "# Version: $fileModDate"
+                                Set-Content $filePath -Value $ymlContent -NoNewline
+                                Write-Success "Fixed version content in $filePath to match file date $fileModDate" -Force
+                            }
+                        }
+                    }
+                }
             }
             
             # Fix config.yml comment version if needed
@@ -640,8 +638,7 @@ if ($BumpAllVersions -and (Test-Path "version.json")) {
     # Update common files with version patterns
     $versionPatterns = @(
         @{ File = "config.yml"; Pattern = '(?m)^Version: "\d+\.\d+\.\d+"'; Template = 'Version: "{0}"'; Desc = "config.yml main version field" },
-        @{ File = "config.yml"; Pattern = '(?m)^# Version:\s*\d+\.\d+\.\d+'; Template = '# Version: {0}'; Desc = "config.yml comment" },
-        @{ File = "$($script:CommonPaths.Src)\init.lua"; Pattern = 'Starting Pit Boss Grill SmartThings Edge Driver v(\d+\.\d+\.\d+|)'; Template = 'Starting Pit Boss Grill SmartThings Edge Driver v{0}'; Desc = "init.lua log message" }
+        @{ File = "config.yml"; Pattern = '(?m)^# Version:\s*\d+\.\d+\.\d+'; Template = '# Version: {0}'; Desc = "config.yml comment" }
     )
     
     $versionPatterns | ForEach-Object {
@@ -652,6 +649,16 @@ if ($BumpAllVersions -and (Test-Path "version.json")) {
     Get-ChildItem "$($script:CommonPaths.Src)\*.lua" | ForEach-Object {
         $content = Get-Content $_.FullName -Raw
         $newContent = $content -replace '(?m)^\s*Version:\s*(\d+\.\d+\.\d+|)', "  Version: $today"
+        if ($newContent -ne $content) {
+            Set-Content -Path $_.FullName -Value $newContent -NoNewline
+            Write-Success "  Updated $($_.Name)" -Force
+        }
+    }
+
+    # Update all profile file version headers
+    Get-ChildItem "$($script:CommonPaths.Profiles)\*.yml" | ForEach-Object {
+        $content = Get-Content $_.FullName -Raw
+        $newContent = $content -replace '(?m)^# Version:\s*(\d+\.\d+\.\d+|)', "# Version: $today"
         if ($newContent -ne $content) {
             Set-Content -Path $_.FullName -Value $newContent -NoNewline
             Write-Success "  Updated $($_.Name)" -Force
@@ -723,25 +730,17 @@ if ($CheckVersions -and (Test-Path "version.json")) {
         }
     }
 
-    # Check hardcoded versions - these should match the main/expected version
-    if (Test-Path "config.yml") {
-        $configContent = Get-Content "config.yml" -Raw
-        if ($configContent -match 'version: "(\d+\.\d+\.\d+)"') {
-            $configVersion = $Matches[1]
-            if ($configVersion -ne $expectedVersion) {
-                $configIssues += "config.yml version field ($configVersion, should be: $expectedVersion)"
-            }
-        } else {
-            $configIssues += "config.yml version field (missing)"
-        }
-    }
-
+    # Check hardcoded versions
+    # Note: config.yml version field will be updated at the end if main version changes,
+    # so we don't report it as an error here in CheckVersions mode
+    
     if (Test-Path "$($script:CommonPaths.Src)\init.lua") {
         $initContent = Get-Content "$($script:CommonPaths.Src)\init.lua" -Raw
+        $initFileModDate = (Get-Item "$($script:CommonPaths.Src)\init.lua").LastWriteTime.ToString($script:DateFormat)
         if ($initContent -match 'Starting Pit Boss Grill SmartThings Edge Driver v(\d+\.\d+\.\d+)') {
             $initLogVersion = $Matches[1]
-            if ($initLogVersion -ne $expectedVersion) {
-                $configIssues += "init.lua log message (v$initLogVersion, should be: v$expectedVersion)"
+            if ($initLogVersion -ne $initFileModDate) {
+                $luaHeaderIssues += "init.lua log message (v$initLogVersion, should be: v$initFileModDate)"
             }
         }
     }
