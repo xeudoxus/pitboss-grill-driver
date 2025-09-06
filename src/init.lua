@@ -674,7 +674,7 @@ if _G and _G.register_cleanup_handler then
 end
 
 -- Start the driver and begin processing SmartThings events
-log.info("Starting Pit Boss Grill SmartThings Edge Driver v2025.9.4")
+log.info("Starting Pit Boss Grill SmartThings Edge Driver")
 
 -- Add signal handler for termination detection (if available)
 if _G and _G.signal then
